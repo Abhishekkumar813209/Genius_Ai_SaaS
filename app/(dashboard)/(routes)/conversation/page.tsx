@@ -7,13 +7,19 @@ import {useForm} from "react-hook-form"
 import {formSchema} from "./constants"
 import { zodResolver } from '@hookform/resolvers/zod';
 
+
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Heading from "@/components/heading"
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import Empty from "@/components/empty";
+
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
+import Loader from "@/components/loader";
+import { cn } from "@/lib/utils";
 
 
 const ConversationPage = () => {
@@ -35,6 +41,16 @@ const ConversationPage = () => {
                 role:'user',
                 content:values.prompt,
             }
+
+            const newMessages = [...messages,userMessage];
+             
+            const response = await axios.post("/api/conversation",{
+                messages:newMessages,
+            })
+            setMessages((current)=>[...current,userMessage,response.data]);
+
+            form.reset();
+
         }catch(error:any){
             console.log(error)
         } finally{
@@ -94,7 +110,31 @@ const ConversationPage = () => {
                 </Form>
             </div>
             <div className="space-y-4 mt-4">
-                    Messages Content
+            {
+                isLoading && (
+                    <div className="p-8 rounded-lg w-full flex items-center justify-center bg-muted">
+                        <Loader />
+                    </div>
+                )
+            }
+
+                {messages.length === 0 && !isLoading && (
+                    <Empty label="No Conversation Started" />
+                )
+
+                }
+                    <div className="flex flex-col">
+                        {messages.map((message)=>(
+                            <div key={message.content}
+                            className={cn(
+                                "p-8 w-full flex items-start gap-x-8 rounded-lg", message.role === "user" ? "bg-white border border-black/10":"bg-muted"
+                            )}
+                            >
+
+                                {message.content}
+                            </div>
+                        ))}
+                    </div>
             </div>
         </div>
      );
