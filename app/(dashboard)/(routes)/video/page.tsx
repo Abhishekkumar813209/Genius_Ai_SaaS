@@ -7,11 +7,9 @@ import axios from "axios";
 import Heading from "@/components/heading";
 import { FormControl, FormField,FormItem,Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { MessageSquare } from "lucide-react";
+import { VideoIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { ChatCompletion, ChatCompletionMessageParam } from "openai/resources/index.mjs";
 import { useState } from "react";
-import {useProModal} from "@/hooks/use-pro-modal"
 import { zodResolver } from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form"
 import { Button } from "@/components/ui/button";
@@ -19,15 +17,10 @@ import { Button } from "@/components/ui/button";
 import Empty from "@/components/empty";
 import { formSchema } from "./constants";
 import Loader from "@/components/loader";
-import { cn } from "@/lib/utils";
-import UserAvatar from "@/components/user-avatar";
-import BotAvatar from "@/components/bot-avatar";
 
-
-const ConversationPage = () => {
+const VideoPage = () => {
     const router = useRouter();
-    const proModal = useProModal();
-    const [messages,setMessages] = useState<ChatCompletionMessageParam[]>([]);
+    const [video,setVideo] = useState<string>();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver:zodResolver(formSchema),
@@ -40,26 +33,15 @@ const ConversationPage = () => {
     
     const onSubmit = async(values:z.infer<typeof formSchema>) =>{
         try{
-            const userMessage : ChatCompletionMessageParam = {
-                role:"user",content:values.prompt
-            };
+           setVideo(undefined);
 
-            const newMessages = [...messages,userMessage];
-
-            const response = await axios.post('/api/conversation',{
-                messages:newMessages
-            });
-            setMessages((current)=>[...current,userMessage,response.data]);
-
-            form.reset();
-        }catch(error:any){
-            if(error?.response?.status === 403){
-                proModal.onOpen();
+           const response = await axios.post("/api/video",values);
+           setVideo(response.data[0]);
+           form.reset();
+        }catch(error){
+            console.log(error)
             }
-            else{
-                console.log("Something went wrong.")
-            }
-        }finally{
+        finally{
             router.refresh();
         }
     }
@@ -67,11 +49,11 @@ const ConversationPage = () => {
     return ( 
         <div>
             <Heading 
-            title="conversation"
-            description="Out Most Advanced conversation model"
-            icon={MessageSquare}
-            iconColor="text-violet-500"
-            bgColor="bg-violet-500/10"
+            title="Video Genaration"
+            description="Turn Your Prompt into Video"
+            icon={VideoIcon}
+            iconColor="text-orange-700"
+            bgColor="bg-orange-700/10"
             />
 
             <div className="px-4 lg:px-8">
@@ -99,7 +81,7 @@ const ConversationPage = () => {
                                 <Input
                                 className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                                 disabled={isLoading}
-                                placeholder="How do i Calculate the radius of a circle?"
+                                placeholder="Clown fish Swimming around a coral reef"
                                 {...field}
                                 />
                             </FormControl>
@@ -119,30 +101,21 @@ const ConversationPage = () => {
                         </div>
                     )}
 
-                    {messages.length === 0 && !isLoading && (
-                        <Empty label = "No Conversation started." />
+                    {!video && !isLoading && (
+                        <Empty label = "No Video Generated" />
                     )}
 
-                    <div className="flex flex-col-reverse gap-y-4">
-                        {messages.map((message)=>(
-                            <div
-                            key={message.content}
-                            className={cn(
-                                "p-8 w-full flex items-start gap-x-8 rounded-lg",
-                                message.role === 'user' ? "bg-white border border-black/10":"bg-muted",
-                            )}
-                            >
-                                {message.role === "user" ? <UserAvatar/> : <BotAvatar />}
-                                <p className="text-sm">
-                                    {message.content}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
+                 {
+                    video && (
+                        <video className="w-full aspect-video mt-8 rounded-lg border bg-black" controls>
+                            <source src={video} />
+                        </video>
+                    )
+                 }
                 </div>
             </div>
         </div>
      );
 }
  
-export default ConversationPage;
+export default VideoPage;

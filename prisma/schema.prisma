@@ -1,0 +1,22 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+datasource db {
+  provider     = "mysql"
+  url          ="mysql://h2w7qh6fk2z4sb2xl6rq:pscale_pw_dDKTckKU1TtUeM264hayop2VC1OzMdeqCSqLLTKcf7Z@aws.connect.psdb.cloud/ai-saas?sslaccept=strict"
+  relationMode = "prisma"
+}
+
+
+model UserApiLimit {
+  id String @id @default(cuid())
+  userId String @unique
+  count Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
