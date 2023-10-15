@@ -20,6 +20,8 @@ export async function POST(req:Request){
             process.env.STRIPE_WEBHOOK_SECRET!
         )
     }catch(error:any){
+        console.log("error in first function")
+        console.log(error)
         return new NextResponse(`Webhook Error: ${error.message}` , {status:400});
     }
 
@@ -33,6 +35,7 @@ export async function POST(req:Request){
    
 
     if(!session?.metadata?.userId){
+        console.log("error in second function")
         return new NextResponse("User Id is Required",{status:400});
     }
 

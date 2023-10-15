@@ -11,10 +11,12 @@ const settingsUrl = absoluteUrl("/settings");
 
 
 export async function GET() {
+    console.log(auth());
     try{
         const {userId} = auth();
+        
         const user = await currentUser();
-
+        
         if(!userId || !user) {
             return new NextResponse("Unauthorized",{status:401});
         }
@@ -44,12 +46,17 @@ export async function GET() {
             line_items:[
                 {
                     price_data:{
-                        currency:"USD",
+                        currency:"INR",
                         product_data:{
                             name:"Genius Pro",
                             description:"Unlimited AI Generations"
-                        }
-                    },
+                        },
+                    
+                    unit_amount: 2000,
+                    recurring: {
+                      interval: "month"
+                    }
+                  },
                     quantity:1,
 
                 }
