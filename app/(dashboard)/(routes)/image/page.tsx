@@ -23,6 +23,7 @@ import UserAvatar from "@/components/user-avatar";
 import BotAvatar from "@/components/bot-avatar";
 import { Card, CardFooter } from "@/components/ui/card";
 import Image from "next/image";
+import toast from "react-hot-toast";
 
 
 const ImagePage = () => {
@@ -51,7 +52,7 @@ if (response.data && response.data.url) {
     setImages([imageUrl]); // Wrap the URL in an array for consistency with the previous structure.
     form.reset();}
         }catch(error:any){
-            console.log(error)
+            toast.error("Something went wrong")
         } finally{
             router.refresh();
         }

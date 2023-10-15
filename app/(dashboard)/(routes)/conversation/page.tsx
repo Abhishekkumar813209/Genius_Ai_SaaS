@@ -22,6 +22,7 @@ import Loader from "@/components/loader";
 import { cn } from "@/lib/utils";
 import UserAvatar from "@/components/user-avatar";
 import BotAvatar from "@/components/bot-avatar";
+import toast from "react-hot-toast";
 
 
 const ConversationPage = () => {
@@ -57,7 +58,7 @@ const ConversationPage = () => {
                 proModal.onOpen();
             }
             else{
-                console.log("Something went wrong.")
+                toast.error("Something went wrong")
             }
         }finally{
             router.refresh();
