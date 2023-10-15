@@ -21,6 +21,7 @@ import { formSchema } from "./constants";
 import Loader from "@/components/loader";
 
 const MusicPage = () => {
+    const proModal = useProModal()
     const router = useRouter();
     const [music,setMusic] = useState<string>();
 
@@ -40,9 +41,11 @@ const MusicPage = () => {
            const response = await axios.post("/api/music",values);
            setMusic(response.data.audio);
            form.reset();
-        }catch(error){
-            console.log(error)
-            }
+        }catch(error:any){
+            if(error?.response?.status === 403){
+                proModal.onOpen();
+            }}
+            
         finally{
             router.refresh();
         }
