@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 "use client";
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
@@ -49,11 +50,14 @@ const tools = [
   },
 ]
 
+=======
+>>>>>>> master
 
 export default function DashboardPage() {
   const router = useRouter();
   return (
     <div>
+<<<<<<< HEAD
         <div className="mb-8 space-y-4">
           <h2 className="text-2xl md:text-4xl font-bold text-center">
             Expolore the power of AI
@@ -82,6 +86,9 @@ export default function DashboardPage() {
               </Card>
             ))}
         </div>
+=======
+        <p> Dashboard Page(Protected) </p>
+>>>>>>> master
     </div>
   )
 }
